@@ -1,10 +1,13 @@
-interface User {
-    name: string;
-    age: number;
-}
+import express, { Express, Request, Response } from 'express';
+import 'dotenv/config';
 
-function saveUserToDatabase(user: User) {
-    console.log(user);
-}
+const app: Express = express();
+const port = process.env.PORT || 3000;
 
-saveUserToDatabase({ name: 'John', age: 42 });
+app.get('/', (req: Request, res: Response) => {
+    res.send('Express + TypeScript Server');
+});
+
+app.listen(port, () => {
+    console.log(`[server]: Server is running at http://localhost:${port}`);
+});
