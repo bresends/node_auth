@@ -2,16 +2,28 @@ import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 import { rootRouter } from './routes/api/root.js';
+import cookieParser from 'cookie-parser';
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
-const corsWhitelist = ['http://localhost:3000'];
+const allowedOrigins = ['http://localhost:3000'];
+
+// Allow javascript to access the cookie in the browser
+app.use((req: Request, res: Response, next) => {
+    const origin = req.headers.origin;
+
+    if (allowedOrigins.includes(origin as string)) {
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+
+    next();
+});
 
 app.use(
     cors({
         origin: (origin = '', callback) => {
-            if (corsWhitelist.indexOf(origin) !== -1 || !origin) {
+            if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
                 callback(null, true);
             } else {
                 callback(new Error('Not allowed by CORS'));
@@ -22,6 +34,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(cookieParser());
 app.use('/api', rootRouter);
 
 app.listen(port, () => {
