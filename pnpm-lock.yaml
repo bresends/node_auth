@@ -29,6 +29,9 @@ dependencies:
   jsonwebtoken:
     specifier: ^9.0.2
     version: 9.0.2
+  latest:
+    specifier: link:@prisma/client/latest
+    version: link:@prisma/client/latest
   node_auth:
     specifier: 'link:'
     version: 'link:'
