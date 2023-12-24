@@ -6,7 +6,8 @@ const { verify } = jsonwebtoken;
 export const verifyJWT = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+    if (!authHeader?.startsWith('Bearer '))
+        return res.status(401).json({ error: 'Unauthorized' });
 
     // Bearer token remove
     const token = authHeader.split(' ')[1];

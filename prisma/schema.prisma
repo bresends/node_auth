@@ -17,11 +17,14 @@ model User {
   password      String
   refresh_token String?
   posts         Post[]
+  roles         Roles  @relation(fields: [rolesId], references: [id])
+  rolesId       String
 }
 
 model Roles {
-  id   Int    @id @default(autoincrement())
+  id   String @id @default(uuid())
   name String @unique
+  user User[]
 }
 
 model Post {

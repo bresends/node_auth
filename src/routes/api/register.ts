@@ -22,6 +22,11 @@ register.post('/', async (req: Request, res: Response) => {
                 name,
                 email,
                 password: hashedPassword,
+                roles: {
+                    connect: {
+                        name: 'user',
+                    },
+                },
             },
         });
         res.status(201).json({ message: 'User created.' });
@@ -34,7 +39,8 @@ register.post('/', async (req: Request, res: Response) => {
         }
 
         if (error instanceof Error) {
-            return res.status(500).json({ error: error.message });
+            console.log(error.message);
+            return res.sendStatus(500);
         }
     }
 });
