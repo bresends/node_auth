@@ -1,14 +1,15 @@
 import bcrypt from 'bcrypt';
 import { Request, Response, Router } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
-import { db } from '../../database/prismaClient.js';
+import { db } from '../../../database/prismaClient.js';
 
 const { sign } = jsonwebtoken;
 
-export const auth = Router();
+export const login = Router();
 
-auth.post('/', async (req: Request, res: Response) => {
+login.post('/', async (req: Request, res: Response) => {
     const { email, password } = req.body;
+    const oldRefreshToken = req.cookies.jwt as string;
 
     if (!email || !password)
         return res.status(400).json({ error: 'Email and password required.' });
@@ -31,19 +32,33 @@ auth.post('/', async (req: Request, res: Response) => {
             { expiresIn: '30s' }
         );
 
-        const refreshToken = sign(
+        const newRefreshToken = sign(
             { userId: user.id },
             process.env.REFRESH_TOKEN_SECRET as string,
             { expiresIn: '1d' }
         );
 
-        // Store refresh token in db
-        await db.user.update({
-            where: { id: user.id },
-            data: { refresh_token: refreshToken },
+        // Remove previous refresh token
+        res.clearCookie('jwt', {
+            httpOnly: true,
+            sameSite: 'none',
+            secure: true,
         });
 
-        res.cookie('jwt', refreshToken, {
+        // Delete previous refresh token from db if it exists
+        if (oldRefreshToken) {
+            await db.refreshToken
+                .delete({ where: { token: oldRefreshToken } })
+                .catch();
+        }
+
+        // Store new refresh token in db
+        await db.user.update({
+            where: { id: user.id },
+            data: { refreshToken: { create: { token: newRefreshToken } } },
+        });
+
+        res.cookie('jwt', newRefreshToken, {
             httpOnly: true,
             sameSite: 'none',
             secure: true,
@@ -53,7 +68,8 @@ auth.post('/', async (req: Request, res: Response) => {
         res.status(200).json({ accessToken });
     } catch (error) {
         if (error instanceof Error) {
-            return res.status(500).json({ error: error.message });
+            console.log(error.message);
+            return res.sendStatus(500);
         }
     }
 });

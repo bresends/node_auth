@@ -1,17 +1,16 @@
 import { Request, Response, Router } from 'express';
-import { db } from '../../database/prismaClient.js';
+import { db } from '../../../database/prismaClient.js';
 
 export const logout = Router();
 
 logout.get('/', async (req: Request, res: Response) => {
     const refreshToken = req.cookies.jwt as string;
 
-    // No content
-    if (!refreshToken) return res.sendStatus(204);
+    if (!refreshToken) return res.sendStatus(204); // No content
 
     try {
         const user = await db.user.findFirst({
-            where: { refresh_token: refreshToken },
+            where: { refreshToken: { some: { token: refreshToken } } },
         });
 
         if (!user) {
@@ -24,9 +23,8 @@ logout.get('/', async (req: Request, res: Response) => {
             return res.sendStatus(204);
         }
 
-        await db.user.update({
-            where: { id: user.id },
-            data: { refresh_token: null },
+        await db.refreshToken.delete({
+            where: { token: refreshToken },
         });
 
         res.clearCookie('jwt', {
@@ -38,7 +36,8 @@ logout.get('/', async (req: Request, res: Response) => {
         res.sendStatus(204);
     } catch (error) {
         if (error instanceof Error) {
-            return res.status(500).json({ error: error.message });
+            console.log(error.message);
+            return res.sendStatus(500);
         }
     }
 });

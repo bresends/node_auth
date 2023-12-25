@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { db } from '../../database/prismaClient.js';
+import { db } from '../../../database/prismaClient.js';
 import bcrypt from 'bcrypt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library.js';
 
