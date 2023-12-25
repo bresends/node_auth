@@ -34,7 +34,6 @@ refresh.get('/', async (req: Request, res: Response) => {
                     if (err) return res.sendStatus(403); // Forbidden
                     // Malicious user trying to use a refresh token that was already deleted
                     // Delete all refresh tokens associated with the attempted user
-                    console.log('Boom!');
                     await db.refreshToken.deleteMany({
                         where: {
                             userId: (decoded as { userId: number }).userId,

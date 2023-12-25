@@ -25,7 +25,6 @@ login.post('/', async (req: Request, res: Response) => {
         if (!passwordValid)
             return res.status(401).json({ error: 'Invalid credentials.' });
 
-        // Generate JWT
         const accessToken = sign(
             { userId: user.id },
             process.env.ACESS_TOKEN_SECRET as string,
@@ -45,11 +44,27 @@ login.post('/', async (req: Request, res: Response) => {
             secure: true,
         });
 
-        // Delete previous refresh token from db if it exists
+        /*
+        Scenario 
+        1) User logs in but never uses RT and does not logout
+        2) RT is stolen and used by attacker
+        3) User logs in again
+        In this I need to: clear all RTs when user logs in
+        */
         if (oldRefreshToken) {
-            await db.refreshToken
-                .delete({ where: { token: oldRefreshToken } })
-                .catch();
+            const dbToken = await db.refreshToken.findUnique({
+                where: { token: oldRefreshToken },
+            });
+
+            if (dbToken) {
+                await db.refreshToken.delete({
+                    where: { token: oldRefreshToken },
+                });
+            } else {
+                await db.refreshToken.deleteMany({
+                    where: { userId: user.id },
+                });
+            }
         }
 
         // Store new refresh token in db
