@@ -1,9 +1,9 @@
-import { Button } from '@/components/ui/button';
+import { Register } from './pages/Register';
 
 export default function Home() {
     return (
-        <div>
-            <Button>Click me</Button>
-        </div>
+        <main className="flex justify-center items-center h-[100dvh]">
+            <Register />
+        </main>
     );
 }
