@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
-const allowedOrigins = ['http://localhost:3000'];
+const allowedOrigins = ['http://localhost:5173'];
 
 // Allow javascript to access the cookie in the browser
 app.use((req: Request, res: Response, next) => {

@@ -6,10 +6,9 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library.js
 export const register = Router();
 
 register.post('/', async (req: Request, res: Response) => {
-    const { name, email, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!name || !email)
-        return res.status(400).json({ error: 'Name and email are required.' });
+    if (!email) return res.status(400).json({ error: 'Email required.' });
 
     if (!password)
         return res.status(400).json({ error: 'Password is required.' });
@@ -19,7 +18,6 @@ register.post('/', async (req: Request, res: Response) => {
 
         await db.user.create({
             data: {
-                name,
                 email,
                 password: hashedPassword,
                 roles: {
