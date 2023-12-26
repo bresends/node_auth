@@ -72,7 +72,7 @@ refresh.get('/', async (req: Request, res: Response) => {
                 const newRefreshToken = sign(
                     { userId: user.id },
                     process.env.REFRESH_TOKEN_SECRET as string,
-                    { expiresIn: '10s' }
+                    { expiresIn: '1d' }
                 );
 
                 // Delete previous refresh token

@@ -5,6 +5,7 @@ import { user } from './user.js';
 import { refresh } from './auth/refresh.js';
 import { logout } from './auth/logout.js';
 import { admin } from './admin.js';
+import { upload } from './upload.js';
 
 export const rootRouter = Router();
 
@@ -14,3 +15,4 @@ rootRouter.use('/refresh_token', refresh);
 rootRouter.use('/logout', logout);
 rootRouter.use('/user', user);
 rootRouter.use('/admin', admin);
+rootRouter.use('/upload', upload);
