@@ -21,12 +21,20 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useEffect } from 'react';
+import { axios } from '@/lib/axios';
+
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const createUserFormSchema = z
     .object({
         email: z.string().email('Invalid email address'),
         password: z
             .string()
+            .regex(
+                PWD_REGEX,
+                'Password should contain at least 1 uppercase, 1 lowercase, 1 number and 1 special character (!@#$%).'
+            )
             .min(8, 'Password should contain at least 8 characters.'),
         confirm_password: z.string().min(8, 'Confirm password is required'),
         terms: z.literal(true, {
@@ -50,9 +58,28 @@ export function Register() {
         },
     });
 
-    function onSubmit(data: z.infer<typeof createUserFormSchema>) {
-        console.log(data);
+    async function onSubmit(data: z.infer<typeof createUserFormSchema>) {
+        try {
+            const response = await axios.post(
+                '/api/register',
+                JSON.stringify(data),
+                {
+                    headers: { 'Content-Type': 'application/json' },
+                    withCredentials: true,
+                }
+            );
+            console.log(response.data);
+        } catch (error) {
+            if (error instanceof Error) {
+                console.log(error.message);
+            }
+        }
     }
+
+    useEffect(() => {
+        form.setFocus('email');
+    }, [form.setFocus]);
+
     return (
         <Card className="w-[350px]">
             <CardHeader>
