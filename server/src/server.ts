@@ -3,11 +3,14 @@ import cors from 'cors';
 import 'dotenv/config';
 import { rootRouter } from './routes/api/root.js';
 import cookieParser from 'cookie-parser';
+import { logEvents } from './middleware/logEvents.js';
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
 const allowedOrigins = ['http://localhost:5173'];
+
+app.use(logEvents);
 
 // Allow javascript to access the cookie in the browser
 app.use((req: Request, res: Response, next) => {
