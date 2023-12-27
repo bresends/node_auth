@@ -21,8 +21,13 @@ register.post('/', async (req: Request, res: Response) => {
                 email,
                 password: hashedPassword,
                 roles: {
-                    connect: {
-                        name: 'user',
+                    connectOrCreate: {
+                        create: {
+                            name: 'user',
+                        },
+                        where: {
+                            name: 'user',
+                        },
                     },
                 },
             },
