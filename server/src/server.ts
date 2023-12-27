@@ -4,6 +4,7 @@ import 'dotenv/config';
 import { rootRouter } from './routes/api/root.js';
 import cookieParser from 'cookie-parser';
 import { logEvents } from './middleware/logEvents.js';
+import { logErrors } from './middleware/logErrors.js';
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
@@ -19,6 +20,8 @@ app.use((req: Request, res: Response, next) => {
     if (allowedOrigins.includes(origin as string)) {
         res.setHeader('Access-Control-Allow-Credentials', 'true');
     }
+
+    throw new Error('Not allowed by CORS');
 
     next();
 });
@@ -39,6 +42,8 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api', rootRouter);
+
+app.use(logErrors);
 
 app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);
