@@ -21,8 +21,6 @@ app.use((req: Request, res: Response, next) => {
         res.setHeader('Access-Control-Allow-Credentials', 'true');
     }
 
-    throw new Error('Not allowed by CORS');
-
     next();
 });
 
