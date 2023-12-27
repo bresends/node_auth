@@ -11,5 +11,9 @@
 -   Controling route testing with Bruno HTTP client
 
 # Client
-
--
+- Components with react
+- Communication with the server with axios
+- Routes with react-router-dom
+- Form control with react-hook-form
+- Styling with shadcn
+- Server data using react-query
