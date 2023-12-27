@@ -18,11 +18,11 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 
+import { registerRequest } from '@/lib/axios';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useEffect } from 'react';
-import { axios } from '@/lib/axios';
 
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
@@ -60,14 +60,7 @@ export function Register() {
 
     async function onSubmit(data: z.infer<typeof createUserFormSchema>) {
         try {
-            const response = await axios.post(
-                '/api/register',
-                JSON.stringify(data),
-                {
-                    headers: { 'Content-Type': 'application/json' },
-                    withCredentials: true,
-                }
-            );
+            const response = await registerRequest(data.email, data.password);
             console.log(response.data);
         } catch (error) {
             if (error instanceof Error) {
@@ -81,114 +74,120 @@ export function Register() {
     }, [form.setFocus]);
 
     return (
-        <Card className="w-[350px]">
-            <CardHeader>
-                <CardTitle>Register</CardTitle>
-                <CardDescription>
-                    Create an account to get started
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Form {...form}>
-                    <form
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        className="grid items-center gap-3"
-                    >
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel htmlFor="email">Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="email"
-                                            id="email"
-                                            placeholder="example@google.com"
-                                            autoComplete="off"
-                                            required
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel htmlFor="password">
-                                        Password
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="password"
-                                            id="password"
-                                            placeholder="********"
-                                            autoComplete="off"
-                                            required
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="confirm_password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel htmlFor="confirm_password">
-                                        Confirm Password
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="password"
-                                            id="confirm_password"
-                                            placeholder="********"
-                                            autoComplete="off"
-                                            required
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="terms"
-                            render={({ field }) => (
-                                <>
-                                    <FormItem className="flex flex-row items-start space-x-2 space-y-0 py-3">
+        <main className="flex justify-center items-center h-[100dvh]">
+            <Card className="w-[350px]">
+                <CardHeader>
+                    <CardTitle>Register</CardTitle>
+                    <CardDescription>
+                        Create an account to get started
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Form {...form}>
+                        <form
+                            onSubmit={form.handleSubmit(onSubmit)}
+                            className="grid items-center gap-3"
+                        >
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel htmlFor="email">
+                                            Email
+                                        </FormLabel>
                                         <FormControl>
-                                            <Checkbox
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                                id="terms"
+                                            <Input
+                                                type="email"
+                                                id="email"
+                                                placeholder="example@google.com"
+                                                autoComplete="off"
+                                                required
+                                                {...field}
                                             />
                                         </FormControl>
-                                        <div className="leading-none">
-                                            <FormLabel htmlFor="terms">
-                                                Accept terms and conditions
-                                            </FormLabel>
-                                        </div>
+                                        <FormMessage />
                                     </FormItem>
-                                </>
-                            )}
-                        />
-                        <Button type="submit" className="w-full">
-                            Submit
-                        </Button>
-                    </form>
-                </Form>
-            </CardContent>
-        </Card>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel htmlFor="password">
+                                            Password
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="password"
+                                                id="password"
+                                                placeholder="********"
+                                                autoComplete="off"
+                                                required
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="confirm_password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel htmlFor="confirm_password">
+                                            Confirm Password
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="password"
+                                                id="confirm_password"
+                                                placeholder="********"
+                                                autoComplete="off"
+                                                required
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="terms"
+                                render={({ field }) => (
+                                    <>
+                                        <FormItem className="flex flex-row items-start space-x-2 space-y-0 py-3">
+                                            <FormControl>
+                                                <Checkbox
+                                                    checked={field.value}
+                                                    onCheckedChange={
+                                                        field.onChange
+                                                    }
+                                                    id="terms"
+                                                />
+                                            </FormControl>
+                                            <div className="leading-none">
+                                                <FormLabel htmlFor="terms">
+                                                    Accept terms and conditions
+                                                </FormLabel>
+                                            </div>
+                                        </FormItem>
+                                    </>
+                                )}
+                            />
+                            <Button type="submit" className="w-full">
+                                Submit
+                            </Button>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+        </main>
     );
 }
