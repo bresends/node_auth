@@ -9,6 +9,7 @@ import './index.css';
 import ErrorPage from './pages/404.tsx';
 import { Register } from './pages/Register.tsx';
 import { Root } from './pages/Root.tsx';
+import { Login } from './pages/Login.tsx';
 
 const router = createBrowserRouter([
     {
@@ -23,7 +24,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/login',
-        element: <Root />,
+        element: <Login />,
         errorElement: <ErrorPage />,
     },
     {

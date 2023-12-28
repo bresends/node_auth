@@ -13,3 +13,6 @@ export const axios = axiosInstance.create({
 
 export const registerRequest = async (email: string, password: string) =>
     axios.post('/api/register', { email, password });
+
+export const loginRequest = async (email: string, password: string) =>
+    axios.post('/api/auth', { email, password });
