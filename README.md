@@ -17,3 +17,4 @@
 - Form control with react-hook-form
 - Styling with shadcn
 - Server data using react-query
+- Register with client side validation
