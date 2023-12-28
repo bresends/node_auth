@@ -20,9 +20,11 @@ import {
 
 import { registerRequest } from '@/lib/axios';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Link } from 'react-router-dom';
 
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
@@ -60,11 +62,16 @@ export function Register() {
 
     async function onSubmit(data: z.infer<typeof createUserFormSchema>) {
         try {
-            const response = await registerRequest(data.email, data.password);
-            console.log(response.data);
+            await registerRequest(data.email, data.password);
         } catch (error) {
-            if (error instanceof Error) {
-                console.log(error.message);
+            if (error instanceof AxiosError && error.response?.status === 409) {
+                form.setError('email', {
+                    message: 'This email is already being used.',
+                });
+            } else if (error instanceof Error) {
+                form.setError('confirm_password', {
+                    message: 'Something went wrong. Please try again.',
+                });
             }
         }
     }
@@ -75,7 +82,7 @@ export function Register() {
 
     return (
         <main className="flex justify-center items-center h-[100dvh]">
-            <Card className="w-[350px]">
+            <Card className="w-96 p-3">
                 <CardHeader>
                     <CardTitle>Register</CardTitle>
                     <CardDescription>
@@ -182,10 +189,21 @@ export function Register() {
                                 )}
                             />
                             <Button type="submit" className="w-full">
-                                Submit
+                                Sign Up
                             </Button>
                         </form>
                     </Form>
+                    <div className="mt-4">
+                        <p className="text-slate-500 text-sm">
+                            Already have an account?{' '}
+                            <Link
+                                to="/login"
+                                className="underline hover:text-slate-700"
+                            >
+                                Click here
+                            </Link>
+                        </p>
+                    </div>
                 </CardContent>
             </Card>
         </main>
