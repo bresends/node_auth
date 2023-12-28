@@ -20,9 +20,9 @@ login.post('/', async (req: Request, res: Response) => {
         if (!user)
             return res.status(401).json({ error: 'Invalid credentials.' });
 
-        const passwordValid = await bcrypt.compare(password, user.password);
+        const passwordMatch = await bcrypt.compare(password, user.password);
 
-        if (!passwordValid)
+        if (!passwordMatch)
             return res.status(401).json({ error: 'Invalid credentials.' });
 
         const accessToken = sign(

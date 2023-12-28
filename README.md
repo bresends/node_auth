@@ -8,7 +8,7 @@
 -   Cors control for only allowing requests from the client
 -   Usign prisma as ORM
 -   Logging with custom middleware (Events and Errors)
--   Controling route testing with Bruno HTTP client
+-   Password hashing with bcrypt
 
 # Client
 - Components with react

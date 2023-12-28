@@ -32,13 +32,13 @@ register.post('/', async (req: Request, res: Response) => {
                 },
             },
         });
-        res.status(201).json({ message: 'User created.' });
+        res.status(201).json({ message: 'New user created.' });
     } catch (error) {
         if (
             error instanceof PrismaClientKnownRequestError &&
             error.code === 'P2002'
         ) {
-            return res.status(400).json({ error: 'Email already in use.' });
+            return res.sendStatus(409); // Conflict
         }
 
         if (error instanceof Error) {
