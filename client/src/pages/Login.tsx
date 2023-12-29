@@ -42,6 +42,10 @@ export function Login() {
 
     const setToken = useAuthStore((state) => state.setToken);
 
+    useEffect(() => {
+        form.setFocus('email');
+    }, [form.setFocus]);
+
     async function onSubmit(data: z.infer<typeof createUserFormSchema>) {
         try {
             const response = await loginRequest(data.email, data.password);
@@ -51,20 +55,17 @@ export function Login() {
                 form.setError('email', {
                     message: 'Unauthorized',
                 });
-            if (error instanceof Error) {
-                form.setError('email', {
-                    message: '',
-                });
-                form.setError('password', {
-                    message: 'Something went wrong. Please try again.',
-                });
+                if (error instanceof Error) {
+                    form.setError('email', {
+                        message: '',
+                    });
+                    form.setError('password', {
+                        message: 'Something went wrong. Please try again.',
+                    });
+                }
             }
         }
     }
-
-    useEffect(() => {
-        form.setFocus('email');
-    }, [form.setFocus]);
 
     return (
         <main className="flex justify-center items-center h-[100dvh]">
