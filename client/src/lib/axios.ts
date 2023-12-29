@@ -20,11 +20,19 @@ export const axiosPrivate = axiosInstance.create({
     withCredentials: true,
 });
 
-export const registerRequest = async (email: string, password: string) =>
-    axios.post('/api/register', { email, password });
+export const registerRequest = async (email: string, password: string) => {
+    const res = await axios.post('/api/register', { email, password });
+    return res.data;
+};
 
-export const loginRequest = async (email: string, password: string) =>
-    axios.post('/api/auth', { email, password });
+export const loginRequest = async (email: string, password: string) => {
+    const res = await axios.post('/api/auth', { email, password });
+    return res.data;
+};
 
-export const userInfoRequest = async (token: string) =>
-    axios.get('/api/user', { headers: { Authorization: `Bearer ${token}` } });
+export const userInfoRequest = async (token: string) => {
+    const res = await axios.post('/api/user', {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
+};

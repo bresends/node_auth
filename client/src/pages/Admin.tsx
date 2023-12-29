@@ -23,7 +23,6 @@ export function Admin() {
                 const response = await axiosPrivate.get('/api/admin', {
                     signal: controller.signal,
                 });
-                console.log(response.data);
                 isMounted && setResponse(response.data);
             } catch (error) {
                 console.log(error);
@@ -38,7 +37,6 @@ export function Admin() {
         };
     }, []);
 
-    console.log(response);
 
     return (
         <main className="flex justify-center items-center h-[100dvh]">

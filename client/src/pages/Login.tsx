@@ -55,10 +55,10 @@ export function Login() {
             const response = await loginRequest(data.email, data.password);
             const user = await axios.get('/api/user', {
                 headers: {
-                    Authorization: `Bearer ${response.data.accessToken}`,
+                    Authorization: `Bearer ${response.accessToken}`,
                 },
             });
-            setToken(response.data.accessToken);
+            setToken(response.accessToken);
             setRole(user.data.user.roles.name);
             navigate(from, { replace: true });
         } catch (error) {
