@@ -1,21 +1,52 @@
-import {
-    QueryClient,
-    QueryClientProvider
-} from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RequireAuth } from './components/RequireAuth.tsx';
 import './index.css';
 import ErrorPage from './pages/404.tsx';
+import { Admin } from './pages/Admin.tsx';
+import { Editor } from './pages/Editor.tsx';
+import { Login } from './pages/Login.tsx';
 import { Register } from './pages/Register.tsx';
 import { Root } from './pages/Root.tsx';
-import { Login } from './pages/Login.tsx';
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <Root />,
+        element: <RequireAuth authorizedRoles={['user', 'editor', 'admin']} />,
         errorElement: <ErrorPage />,
+        children: [
+            {
+                path: '/',
+                element: <Root />,
+                errorElement: <ErrorPage />,
+            },
+        ],
+    },
+    {
+        path: '/',
+        element: <RequireAuth authorizedRoles={['admin', 'editor']} />,
+        errorElement: <ErrorPage />,
+        children: [
+            {
+                path: '/editor',
+                element: <Editor />,
+                errorElement: <ErrorPage />,
+            },
+        ],
+    },
+    {
+        path: '/',
+        element: <RequireAuth authorizedRoles={['admin']} />,
+        errorElement: <ErrorPage />,
+        children: [
+            {
+                path: '/admin',
+                element: <Admin />,
+                errorElement: <ErrorPage />,
+            },
+        ],
     },
     {
         path: '/register',
@@ -25,11 +56,6 @@ const router = createBrowserRouter([
     {
         path: '/login',
         element: <Login />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: '/tasks',
-        element: <Root />,
         errorElement: <ErrorPage />,
     },
     {
