@@ -7,20 +7,18 @@ import {
 } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 
-export function Root() {
+export default function Unauthorized() {
     return (
         <main className="flex justify-center items-center h-[100dvh]">
             <Card className="w-96 p-3">
                 <CardHeader>
-                    <CardTitle>Home</CardTitle>
-                    <CardDescription>Your are logged in!</CardDescription>
+                    <CardTitle>Unauthorized</CardTitle>
+                    <CardDescription>
+                        Sorry, you do not have access to the requested page.
+                    </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-6">
-                    <Link to="/editor">Go to the Editor page</Link>
-                    <Link to="/admin">Go to the Admin page</Link>
-                    <Link to="/lounge">Go to the Lounge page</Link>
-                    <Link to="/link">Go to the Link page</Link>
-                    <Link to="/logout">Logout</Link>
+                    <Link to="/">Go back to the main page!</Link>
                 </CardContent>
             </Card>
         </main>
