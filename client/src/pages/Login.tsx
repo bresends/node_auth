@@ -17,14 +17,14 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 
-import { loginRequest } from '@/lib/axios';
-import { useAuthStore } from '@/store/userStore';
+import { useAuth } from '@/hooks/useAuth';
+import { axios, loginRequest } from '@/lib/axios';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import { AxiosError } from 'axios';
 
 const createUserFormSchema = z.object({
     email: z.string().email('Invalid email address'),
@@ -40,7 +40,11 @@ export function Login() {
         },
     });
 
-    const setToken = useAuthStore((state) => state.setToken);
+    const { setToken, setRole } = useAuth();
+
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/';
 
     useEffect(() => {
         form.setFocus('email');
@@ -49,7 +53,14 @@ export function Login() {
     async function onSubmit(data: z.infer<typeof createUserFormSchema>) {
         try {
             const response = await loginRequest(data.email, data.password);
-            setToken(response.data.token);
+            const user = await axios.get('/api/user', {
+                headers: {
+                    Authorization: `Bearer ${response.data.accessToken}`,
+                },
+            });
+            setToken(response.data.accessToken);
+            setRole(user.data.user.roles.name);
+            navigate(from, { replace: true });
         } catch (error) {
             if (error instanceof AxiosError && error.response?.status === 401) {
                 form.setError('email', {
