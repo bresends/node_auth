@@ -27,11 +27,11 @@ export const useAxiosPrivate = () => {
                 if (error?.response?.status === 403 && !prevRequest?.sent) {
                     prevRequest.sent = true;
 
-                    const accessToken = await refresh();
+                    const newAccessToken = await refresh();
 
                     prevRequest.headers[
                         'Authorization'
-                    ] = `Bearer ${accessToken}`;
+                    ] = `Bearer ${newAccessToken}`;
 
                     return axiosPrivate(prevRequest);
                 }

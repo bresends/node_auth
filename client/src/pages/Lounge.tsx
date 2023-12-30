@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -22,7 +23,9 @@ export function Lounge() {
                     <Link to="/">Go back to the main page</Link>
                     <Link to="/admin">Go to the Admin page</Link>
                     <Link to="/editor">Go to the Editor page</Link>
-                    <Link to="/logout">Logout</Link>
+                    <Button variant="destructive">
+                        <Link to="/logout">Logout</Link>
+                    </Button>
                 </CardContent>
             </Card>
         </main>

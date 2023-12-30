@@ -1,5 +1,5 @@
 import { useAuth } from '@/hooks/useAuth';
-import { useAxiosPrivate } from '@/hooks/useAxiosPrivate';
+import { useUserInfo } from '@/hooks/useUserInfo';
 import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
@@ -12,33 +12,29 @@ export default RequireAuth;
 export function RequireAuth({ authorizedRoles }: Props) {
     const { token, role, setRole } = useAuth();
     const location = useLocation();
-    const axiosPrivate = useAxiosPrivate();
+    const getUserRole = useUserInfo();
 
     useEffect(() => {
-        let isMounted = true;
-        const controller = new AbortController();
-
-        const getUser = async () => {
+        const getRole = async () => {
             try {
-                const response = await axiosPrivate.get('/api/user', {
-                    signal: controller.signal,
-                });
-                isMounted && setRole(response.data.user.roles.name);
+                const role = await getUserRole();
+                setRole(role);
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         };
 
-        getUser();
-
-        return () => {
-            isMounted = false;
-            controller.abort();
-        };
+        if (token && !role) {
+            getRole();
+        }
     }, []);
 
     if (!token) {
         return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+
+    if (token && !role) {
+        return <p>Loading...</p>;
     }
 
     if (token && !authorizedRoles.includes(role)) {

@@ -6,25 +6,31 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Link } from 'react-router-dom';
+import { useLogout } from '@/hooks/useLogout';
+import { LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-export function Editor() {
+export default function Logout() {
+    const logout = useLogout();
+    const navigate = useNavigate();
+
+    const signOut = async () => {
+        await logout();
+        navigate('/login');
+    };
     return (
         <main className="flex justify-center items-center h-[100dvh]">
             <Card className="w-96 p-3">
                 <CardHeader>
-                    <CardTitle>Editor Page</CardTitle>
+                    <CardTitle>Logout</CardTitle>
                     <CardDescription>
-                        This page is only accesible for admins and editors!
+                        Are you sure you want to logout?
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-6">
-                    <Link to="/">Go back to the main page</Link>
-                    <Link to="/admin">Go to the Admin page</Link>
-                    <Link to="/lounge">Go to the Lounge page</Link>
-                    <Link to="/link">Go to the Link page</Link>
-                    <Button variant="destructive">
-                        <Link to="/logout">Logout</Link>
+                    <Button variant="destructive" onClick={signOut}>
+                        <LogOut size={20} />
+                        Logout
                     </Button>
                 </CardContent>
             </Card>
