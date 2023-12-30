@@ -9,13 +9,14 @@ export function PersistAuth() {
     const refresh = useRefreshToken();
 
     useEffect(() => {
+        let isMounted = true;
         const verifyRefreshToken = async () => {
             try {
                 await refresh();
             } catch (error) {
                 console.error(error);
             } finally {
-                setIsLoading(false);
+                isMounted && setIsLoading(false);
             }
         };
 
@@ -24,6 +25,10 @@ export function PersistAuth() {
         } else {
             setIsLoading(false);
         }
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     if (isLoading) {
