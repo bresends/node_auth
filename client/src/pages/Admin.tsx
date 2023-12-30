@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -9,6 +10,16 @@ import { useAxiosPrivate } from '@/hooks/useAxiosPrivate';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+export interface User {
+    id: number;
+    email: string;
+    roles: Roles;
+}
+
+export interface Roles {
+    name: string;
+}
+
 export function Admin() {
     const axiosPrivate = useAxiosPrivate();
 
@@ -18,7 +29,7 @@ export function Admin() {
         let isMounted = true;
         const controller = new AbortController();
 
-        const getAdmin = async () => {
+        const getAdminProtectedData = async () => {
             try {
                 const response = await axiosPrivate.get('/api/admin', {
                     signal: controller.signal,
@@ -29,14 +40,13 @@ export function Admin() {
             }
         };
 
-        getAdmin();
+        getAdminProtectedData();
 
         return () => {
             isMounted = false;
             controller.abort();
         };
     }, []);
-
 
     return (
         <main className="flex justify-center items-center h-[100dvh]">
@@ -48,10 +58,22 @@ export function Admin() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-6">
+                    <p>All Users</p>
+                    <ul>
+                        {response?.users?.map((user: User) => (
+                            <li key={user.id}>
+                                User {user.id} - {user.email} - Role:{' '}
+                                {user.roles.name.toLocaleUpperCase()}
+                            </li>
+                        ))}
+                    </ul>
+
                     <Link to="/">Go back to the main page</Link>
                     <Link to="/editor">Go to the Editors page</Link>
                     <Link to="/link">Go to the Link page</Link>
-                    <Link to="/logout">Logout</Link>
+                    <Button variant="destructive">
+                        <Link to="/logout">Logout</Link>
+                    </Button>
                 </CardContent>
             </Card>
         </main>
