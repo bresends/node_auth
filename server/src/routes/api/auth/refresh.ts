@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
-import { db } from '../../../database/prismaClient.js';
+import { db } from '@/database/prismaClient.js';
 
 const { sign, verify } = jsonwebtoken;
 
@@ -9,14 +9,9 @@ export const refresh = Router();
 refresh.get('/', async (req: Request, res: Response) => {
     const refreshToken = req.cookies.jwt as string;
 
-    if (!refreshToken) return res.sendStatus(401);
+    console.log('Tried Login with:', refreshToken);
 
-    // Remove previous refresh token
-    res.clearCookie('jwt', {
-        httpOnly: true,
-        sameSite: 'none',
-        secure: true,
-    });
+    if (!refreshToken) return res.sendStatus(401);
 
     try {
         const user = await db.user.findFirst({

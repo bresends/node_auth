@@ -35,13 +35,6 @@ login.post('/', async (req: Request, res: Response) => {
             { expiresIn: '1d' }
         );
 
-        // Remove previous refresh token
-        res.clearCookie('jwt', {
-            httpOnly: true,
-            sameSite: 'none',
-            secure: true,
-        });
-
         /*
         Scenario 
         1) User logs in but never uses RT and does not logout
