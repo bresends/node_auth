@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { Request, Response, Router } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
-import { db } from '../../../database/prismaClient.js';
+import { db } from '@/database/prismaClient.js';
 
 const { sign } = jsonwebtoken;
 
@@ -17,13 +17,11 @@ login.post('/', async (req: Request, res: Response) => {
     try {
         const user = await db.user.findUnique({ where: { email } });
 
-        if (!user)
-            return res.status(401).json({ error: 'Invalid credentials.' });
+        if (!user) return res.sendStatus(401);
 
         const passwordMatch = await bcrypt.compare(password, user.password);
 
-        if (!passwordMatch)
-            return res.status(401).json({ error: 'Invalid credentials.' });
+        if (!passwordMatch) return res.sendStatus(401);
 
         const accessToken = sign(
             { userId: user.id },

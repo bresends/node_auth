@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { db } from '../../../database/prismaClient.js';
+import { db } from '@/database/prismaClient.js';
 import bcrypt from 'bcrypt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library.js';
 
@@ -9,7 +9,6 @@ register.post('/', async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     if (!email) return res.status(400).json({ error: 'Email required.' });
-
     if (!password)
         return res.status(400).json({ error: 'Password is required.' });
 
