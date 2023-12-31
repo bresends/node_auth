@@ -6,6 +6,7 @@ import { refresh } from './auth/refresh.js';
 import { logout } from './auth/logout.js';
 import { admin } from './admin.js';
 import { resetPassword } from './auth/reset_password.js';
+import { post } from './posts/posts.js';
 
 export const rootRouter = Router();
 
@@ -16,3 +17,4 @@ rootRouter.use('/reset_password', resetPassword);
 rootRouter.use('/logout', logout);
 rootRouter.use('/user', user);
 rootRouter.use('/admin', admin);
+rootRouter.use('/post', post);
