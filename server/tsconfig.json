@@ -8,7 +8,10 @@
         "strict": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
-        "typeRoots": ["server/src/@types"]
+        "typeRoots": ["./src/@types"],
+        "paths": {
+            "@/*": ["./src/*"],
+        }
     },
-    "include": ["server/src/**/*"]
+    "include": ["./src/**/*"]
 }
