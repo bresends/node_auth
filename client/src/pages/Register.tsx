@@ -25,6 +25,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
+import { useToast } from '@/components/ui/use-toast';
 
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
@@ -53,6 +54,8 @@ const createUserFormSchema = z
 export function Register() {
     const navigate = useNavigate();
 
+    const { toast } = useToast();
+
     const form = useForm<z.infer<typeof createUserFormSchema>>({
         resolver: zodResolver(createUserFormSchema),
         defaultValues: {
@@ -65,6 +68,10 @@ export function Register() {
     async function onSubmit(data: z.infer<typeof createUserFormSchema>) {
         try {
             await registerRequest(data.email, data.password);
+            toast({
+                title: 'Account Created',
+                description: 'Your account has been created. Please login.',
+            });
             navigate('/login');
         } catch (error) {
             if (error instanceof AxiosError && error.response?.status === 409) {

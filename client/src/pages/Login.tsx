@@ -25,6 +25,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
+import { useToast } from '@/components/ui/use-toast';
 
 const createUserFormSchema = z.object({
     email: z.string().email('Invalid email address'),
@@ -41,6 +42,8 @@ export function Login() {
     });
 
     const { setToken, setRole } = useAuth();
+
+    const { toast } = useToast();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -63,17 +66,11 @@ export function Login() {
             navigate(from, { replace: true });
         } catch (error) {
             if (error instanceof AxiosError && error.response?.status === 401) {
-                form.setError('email', {
-                    message: 'Unauthorized',
+                toast({
+                    variant: 'destructive',
+                    title: 'Unauthorized',
+                    description: 'Please check your credentials',
                 });
-                if (error instanceof Error) {
-                    form.setError('email', {
-                        message: '',
-                    });
-                    form.setError('password', {
-                        message: 'Something went wrong. Please try again.',
-                    });
-                }
             }
         }
     }
@@ -138,6 +135,18 @@ export function Login() {
                                     </FormItem>
                                 )}
                             />
+
+                            {/* Create a link to Forgot Password */}
+
+                            <p className="text-slate-500 text-[13px] text-right mt-[-12px] mb-3">
+                                Forgot Password?{' '}
+                                <Link
+                                    to="/forgot_password"
+                                    className="underline hover:text-slate-700"
+                                >
+                                    Click here
+                                </Link>
+                            </p>
 
                             <Button type="submit" className="w-full">
                                 Sign In
