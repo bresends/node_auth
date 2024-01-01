@@ -11,19 +11,27 @@ datasource db {
 }
 
 model User {
-  id           Int            @id @default(autoincrement())
-  email        String         @unique
-  name         String?
-  password     String
-  posts        Post[]
-  roles        Roles          @relation(fields: [rolesId], references: [id])
-  rolesId      String
-  refreshToken RefreshToken[]
+  id                 Int                  @id @default(autoincrement())
+  email              String               @unique
+  name               String?
+  password           String
+  posts              Post[]
+  roles              Roles                @relation(fields: [rolesId], references: [id])
+  rolesId            String
+  refreshToken       RefreshToken[]
+  PasswordResetToken PasswordResetToken[]
 }
 
 model RefreshToken {
   id        String   @id @default(uuid())
   token     String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
   createdAt DateTime @default(now())
