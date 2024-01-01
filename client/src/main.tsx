@@ -18,6 +18,8 @@ import { Root } from './pages/Root.tsx';
 import Unauthorized from './pages/Unauthorized.tsx';
 import { PersistAuth } from './components/PersistAuth.tsx';
 import Logout from './pages/Logout.tsx';
+import { Toaster } from './components/ui/toaster.tsx';
+import { ForgotPassword } from './pages/ForgotPassword.tsx';
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -25,6 +27,7 @@ const router = createBrowserRouter(
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot_password" element={<ForgotPassword />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/Logout" element={<Logout />} />
 
@@ -63,5 +66,6 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <RouterProvider router={router} />
+        <Toaster />
     </React.StrictMode>
 );
