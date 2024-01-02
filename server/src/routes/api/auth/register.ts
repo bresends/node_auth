@@ -1,7 +1,8 @@
-import { Request, Response, Router } from 'express';
-import { db } from '@/database/prismaClient.js';
+import { db } from '@/database/drizzleClient.js';
+import { roles, users } from '@/database/schema.js';
+import { LibsqlError } from '@libsql/client';
 import bcrypt from 'bcrypt';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library.js';
+import { Request, Response, Router } from 'express';
 
 export const register = Router();
 
@@ -15,33 +16,31 @@ register.post('/', async (req: Request, res: Response) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        await db.user.create({
-            data: {
+        const role = await db
+            .insert(roles)
+            .values({
+                name: 'user',
+            })
+            .onConflictDoUpdate({ target: roles.name, set: { name: 'user' } })
+            .returning({ roleId: roles.id });
+
+        await db
+            .insert(users)
+            .values({
                 email,
                 password: hashedPassword,
-                roles: {
-                    connectOrCreate: {
-                        create: {
-                            name: 'user',
-                        },
-                        where: {
-                            name: 'user',
-                        },
-                    },
-                },
-            },
-        });
+                roleId: role[0].roleId,
+            })
+            .returning({ newUserId: users.id });
+
         res.status(201).json({ message: 'New user created.' });
     } catch (error) {
-        if (
-            error instanceof PrismaClientKnownRequestError &&
-            error.code === 'P2002'
-        ) {
+        if (error instanceof LibsqlError && error.code === 'SQLITE_CONSTRAINT') {
             return res.sendStatus(409); // Conflict
         }
 
         if (error instanceof Error) {
-            console.log(error.message);
+            console.log(error);
             return res.sendStatus(500);
         }
     }
