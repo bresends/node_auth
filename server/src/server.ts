@@ -9,7 +9,10 @@ import { logErrors } from './middleware/logErrors.js';
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
-const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+const allowedOrigins = process.env.ALLOWED_ORIGINS || '';
+const allowedOriginsArray = allowedOrigins
+    .split(',')
+    .map((item) => item.trim());
 
 app.use(logEvents);
 
@@ -17,7 +20,7 @@ app.use(logEvents);
 app.use((req: Request, res: Response, next) => {
     const origin = req.headers.origin;
 
-    if (allowedOrigins.includes(origin as string)) {
+    if (allowedOriginsArray.includes(origin as string)) {
         res.setHeader('Access-Control-Allow-Credentials', 'true');
     }
 
@@ -27,7 +30,7 @@ app.use((req: Request, res: Response, next) => {
 app.use(
     cors({
         origin: (origin = '', callback) => {
-            if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+            if (allowedOriginsArray.indexOf(origin) !== -1 || !origin) {
                 callback(null, true);
             } else {
                 callback(new Error('Not allowed by CORS'));
@@ -44,5 +47,7 @@ app.use('/api', rootRouter);
 app.use(logErrors);
 
 app.listen(port, () => {
-    console.log(`[server]: Server is running at http://localhost:${port}`);
+    console.log(
+        `[server]: Server is running at ${process.env.SERVER_URL}:${port}`
+    );
 });
