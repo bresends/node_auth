@@ -16,7 +16,7 @@ export const verifyRole = (allowedRoles: string[]) => {
 
         verify(
             token,
-            process.env.ACESS_TOKEN_SECRET as string,
+            process.env.ACCESS_TOKEN_SECRET as string,
             async (err, decoded) => {
                 if (err) return res.sendStatus(401); // Unauthorized
 
