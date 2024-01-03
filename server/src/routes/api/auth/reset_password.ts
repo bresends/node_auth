@@ -1,7 +1,9 @@
-import { db } from '@/database/prismaClient.js';
+import { db } from '@/database/drizzleClient.js';
 import { Request, Response, Router } from 'express';
 import { Resend } from 'resend';
 import bcrypt from 'bcrypt';
+import { users, passwordResetToken } from '@/database/schema.js';
+import { eq } from 'drizzle-orm';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -13,19 +15,22 @@ resetPassword.post('/', async (req: Request, res: Response) => {
     if (!email) return res.sendStatus(401);
 
     try {
-        const user = await db.user.findUnique({
-            where: { email },
-        });
+        const user = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, email))
+            .limit(1);
 
         if (!user) return res.sendStatus(404);
 
-        const token = await db.passwordResetToken.create({
-            data: {
-                userId: user.id,
-            },
-        });
+        const token = await db
+            .insert(passwordResetToken)
+            .values({
+                userId: user[0].id,
+            })
+            .returning({ id: passwordResetToken.id });
 
-        const url = `http://localhost:3000/reset-password/${token.id}`;
+        const url = `${process.env.CLIENT_URL}/reset-password/${token[0].id}`;
 
         await resend.emails.send({
             from: `${process.env.MAIL_USER} <${process.env.MAIL_ADRESS}>`,
@@ -51,30 +56,33 @@ resetPassword.post('/:tokenId', async (req: Request, res: Response) => {
     if (!tokenId || !password) return res.sendStatus(401);
 
     try {
-        const token = await db.passwordResetToken.findUnique({
-            where: { id: tokenId },
-        });
+        const token = await db
+            .select({ userId: passwordResetToken.userId })
+            .from(passwordResetToken)
+            .where(eq(passwordResetToken.id, tokenId))
+            .limit(1);
 
         if (!token) return res.sendStatus(404);
 
-        const user = await db.user.findUnique({
-            where: { id: token.userId },
-        });
+        const user = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, Number(token[0].userId)));
 
         if (!user) return res.sendStatus(404);
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        await db.user.update({
-            where: { id: user.id },
-            data: {
+        await db
+            .update(users)
+            .set({
                 password: hashedPassword,
-            },
-        });
+            })
+            .where(eq(users.id, user[0].id));
 
-        await db.passwordResetToken.delete({
-            where: { id: tokenId },
-        });
+        await db
+            .delete(passwordResetToken)
+            .where(eq(passwordResetToken.id, tokenId));
 
         return res.sendStatus(200);
     } catch (error) {
