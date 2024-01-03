@@ -4,7 +4,7 @@ import 'dotenv/config';
 import express, { Express, Request, Response } from 'express';
 import { pinoHttp } from 'pino-http';
 import { logger } from './lib/logger';
-import { rootRouter } from './routes/root';
+import { rootRouter } from './routes/api/root';
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
