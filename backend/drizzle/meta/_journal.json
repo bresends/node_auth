@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1704320245167,
+      "tag": "0000_special_kinsey_walden",
+      "breakpoints": true
+    }
+  ]
+}
