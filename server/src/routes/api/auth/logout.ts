@@ -1,19 +1,22 @@
 import { Request, Response, Router } from 'express';
-import { db } from '../../../database/prismaClient.js';
+import { db } from '@/database/drizzleClient.js';
+import { refreshToken } from '@/database/schema.js';
+import { eq } from 'drizzle-orm';
 
 export const logout = Router();
 
 logout.get('/', async (req: Request, res: Response) => {
-    const refreshToken = req.cookies.jwt as string;
+    const oldRefreshToken = req.cookies.jwt as string;
 
-    if (!refreshToken) return res.sendStatus(204); // No content
+    if (!oldRefreshToken) return res.sendStatus(204); // No content
 
     try {
-        const user = await db.user.findFirst({
-            where: { refreshToken: { some: { token: refreshToken } } },
-        });
+        const dbToken = await db
+            .select()
+            .from(refreshToken)
+            .where(eq(refreshToken.token, oldRefreshToken));
 
-        if (!user) {
+        if (!dbToken) {
             res.clearCookie('jwt', {
                 httpOnly: true,
                 sameSite: 'none',
@@ -23,9 +26,9 @@ logout.get('/', async (req: Request, res: Response) => {
             return res.sendStatus(204);
         }
 
-        await db.refreshToken.delete({
-            where: { token: refreshToken },
-        });
+        await db
+            .delete(refreshToken)
+            .where(eq(refreshToken.token, oldRefreshToken));
 
         res.clearCookie('jwt', {
             httpOnly: true,
