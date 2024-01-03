@@ -1,7 +1,9 @@
+import { db } from '@/database/drizzleClient.js';
+import { refreshToken, users } from '@/database/schema.js';
 import bcrypt from 'bcrypt';
+import { eq } from 'drizzle-orm';
 import { Request, Response, Router } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
-import { db } from '@/database/prismaClient.js';
 
 const { sign } = jsonwebtoken;
 
@@ -15,22 +17,30 @@ login.post('/', async (req: Request, res: Response) => {
         return res.status(400).json({ error: 'Email and password required.' });
 
     try {
-        const user = await db.user.findUnique({ where: { email } });
+        const user = await db
+            .select({
+                id: users.id,
+                password: users.password,
+                refreshTokenId: refreshToken.id,
+            })
+            .from(users)
+            .where(eq(users.email, email))
+            .leftJoin(refreshToken, eq(users.id, refreshToken.userId));
 
         if (!user) return res.sendStatus(401);
 
-        const passwordMatch = await bcrypt.compare(password, user.password);
+        const passwordMatch = await bcrypt.compare(password, user[0].password);
 
         if (!passwordMatch) return res.sendStatus(401);
 
         const accessToken = sign(
-            { userId: user.id },
+            { userId: user[0].id },
             process.env.ACESS_TOKEN_SECRET as string,
             { expiresIn: '30s' }
         );
 
         const newRefreshToken = sign(
-            { userId: user.id },
+            { userId: user[0].id },
             process.env.REFRESH_TOKEN_SECRET as string,
             { expiresIn: '1d' }
         );
@@ -43,25 +53,26 @@ login.post('/', async (req: Request, res: Response) => {
         In this I need to: clear all RTs when user logs in
         */
         if (oldRefreshToken) {
-            const dbToken = await db.refreshToken.findUnique({
-                where: { token: oldRefreshToken },
-            });
+            const dbToken = await db
+                .select({ oldToken: refreshToken.token })
+                .from(refreshToken)
+                .where(eq(refreshToken.token, oldRefreshToken));
 
             if (dbToken) {
-                await db.refreshToken.delete({
-                    where: { token: oldRefreshToken },
-                });
+                await db
+                    .delete(refreshToken)
+                    .where(eq(refreshToken.token, oldRefreshToken));
             } else {
-                await db.refreshToken.deleteMany({
-                    where: { userId: user.id },
-                });
+                await db
+                    .delete(refreshToken)
+                    .where(eq(refreshToken.userId, user[0].id));
             }
         }
 
         // Store new refresh token in db
-        await db.user.update({
-            where: { id: user.id },
-            data: { refreshToken: { create: { token: newRefreshToken } } },
+        await db.insert(refreshToken).values({
+            token: newRefreshToken,
+            userId: user[0].id,
         });
 
         res.cookie('jwt', newRefreshToken, {
