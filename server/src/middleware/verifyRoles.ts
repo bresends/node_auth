@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
-import { db } from '../database/prismaClient.js';
+import { db } from '@/database/drizzleClient.js';
+import { roles, users } from '@/database/schema.js';
+import { eq } from 'drizzle-orm';
 
 const { verify } = jsonwebtoken;
 
@@ -22,21 +24,18 @@ export const verifyRole = (allowedRoles: string[]) => {
                     userId: number;
                 };
 
-                const user = await db.user.findUnique({
-                    where: {
-                        id: userId,
-                    },
-                    select: {
-                        roles: true,
-                    },
-                });
+                const user = await db
+                    .select({ role: roles.name })
+                    .from(users)
+                    .where(eq(users.id, userId))
+                    .innerJoin(roles, eq(users.roleId, roles.id));
 
                 if (!user) {
                     return res.sendStatus(401);
                 }
 
                 const isAllowed = allowedRoles.some((role) =>
-                    user.roles.name.includes(role)
+                    user[0].role.includes(role)
                 );
 
                 if (!isAllowed) {
