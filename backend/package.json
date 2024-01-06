@@ -7,7 +7,7 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "tsx src/server.ts",
         "build": "tsup src/server.ts",
-        "start": "tsup src/server.ts && node dist/server.js",
+        "start": "node dist/server.js",
         "db:push": "drizzle-kit push:sqlite",
         "db:generate": "drizzle-kit generate:sqlite",
         "db:migrate": "tsx src/database/migrate.ts",
