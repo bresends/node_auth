@@ -32,7 +32,6 @@
     },
     "dependencies": {
         "@libsql/client": "0.4.0-pre.5",
-        "backend": "link:",
         "bcrypt": "^5.1.1",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
