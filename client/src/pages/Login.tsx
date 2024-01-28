@@ -51,7 +51,7 @@ export function Login() {
 
     useEffect(() => {
         form.setFocus('email');
-    }, [form.setFocus]);
+    }, [form]);
 
     async function onSubmit(data: z.infer<typeof createUserFormSchema>) {
         try {
