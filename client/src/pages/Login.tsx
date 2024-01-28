@@ -61,9 +61,9 @@ export function Login() {
                     Authorization: `Bearer ${response.accessToken}`,
                 },
             });
+            navigate(from, { replace: true });
             setToken(response.accessToken);
             setRole(user.data.user.roles.name);
-            navigate(from, { replace: true });
         } catch (error) {
             if (error instanceof AxiosError && error.response?.status === 401) {
                 toast({
