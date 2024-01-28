@@ -9,7 +9,6 @@ export function useUserInfo() {
     const getUserInfo = async () => {
         try {
             const { data } = await axiosPrivate.get('/api/user');
-            console.log('getUserInfo', data);
             setRole(data.user.role);
             return data.user.role;
         } catch (error) {
