@@ -5,9 +5,9 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "tsx src/server.ts",
+        "dev": "tsx watch --env-file .env src/server.ts",
         "build": "tsup src/server.ts",
-        "start": "node dist/server.js",
+        "start": "node --env-file .env dist/server.js",
         "db:push": "drizzle-kit push:sqlite",
         "db:generate": "drizzle-kit generate:sqlite",
         "db:migrate": "tsx src/database/migrate.ts",
@@ -36,12 +36,12 @@
         "bcrypt": "^5.1.1",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
-        "dotenv": "^16.3.1",
         "drizzle-orm": "^0.29.3",
         "express": "^4.18.2",
         "jsonwebtoken": "^9.0.2",
         "pino": "^8.17.2",
         "pino-http": "^9.0.0",
-        "resend": "^2.1.0"
+        "resend": "^2.1.0",
+        "zod": "^3.22.4"
     }
 }
