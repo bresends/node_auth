@@ -1,9 +1,9 @@
 import { Router } from 'express';
 
-import { db } from '@/database/drizzleClient.js';
-import { verifyJWT } from '@/middleware/verifyJWT.js';
-import { verifyRole } from '@/middleware/verifyRoles.js';
-import { roles, users } from '@/database/schema.js';
+import { db } from '@src/database/drizzleClient.js';
+import { verifyJWT } from '@src/middleware/verifyJWT.js';
+import { verifyRole } from '@src/middleware/verifyRoles.js';
+import { roles, users } from '@src/database/schema.js';
 import { eq } from 'drizzle-orm';
 export const user = Router();
 

@@ -1,8 +1,9 @@
 import { Request, Response, Router } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
-import { db } from '@/database/drizzleClient.js';
-import { refreshToken, users } from '@/database/schema.js';
+import { db } from '@src/database/drizzleClient.js';
+import { refreshToken, users } from '@src/database/schema.js';
 import { eq } from 'drizzle-orm';
+import { env } from '@/env';
 
 const { sign, verify } = jsonwebtoken;
 
@@ -28,7 +29,7 @@ refresh.get('/', async (req: Request, res: Response) => {
         if (!user) {
             verify(
                 oldRefreshToken,
-                process.env.REFRESH_TOKEN_SECRET as string,
+                env.REFRESH_TOKEN_SECRET as string,
                 async (err, decoded) => {
                     if (err) return res.sendStatus(403); // Forbidden
                     // Malicious user trying to use a refresh token that was already deleted
@@ -48,7 +49,7 @@ refresh.get('/', async (req: Request, res: Response) => {
 
         verify(
             oldRefreshToken,
-            process.env.REFRESH_TOKEN_SECRET as string,
+            env.REFRESH_TOKEN_SECRET as string,
             async (err, decoded) => {
                 if (err) {
                     if (err.name === 'TokenExpiredError') {
@@ -67,13 +68,13 @@ refresh.get('/', async (req: Request, res: Response) => {
 
                 const newAccessToken = sign(
                     { userId: user[0].id },
-                    process.env.ACCESS_TOKEN_SECRET as string,
+                    env.ACCESS_TOKEN_SECRET as string,
                     { expiresIn: '30s' }
                 );
 
                 const newRefreshToken = sign(
                     { userId: user[0].id },
-                    process.env.REFRESH_TOKEN_SECRET as string,
+                    env.REFRESH_TOKEN_SECRET as string,
                     { expiresIn: '1d' }
                 );
 

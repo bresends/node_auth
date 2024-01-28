@@ -1,9 +1,10 @@
-import { db } from '@/database/drizzleClient.js';
-import { refreshToken, users } from '@/database/schema.js';
+import { db } from '@src/database/drizzleClient.js';
+import { refreshToken, users } from '@src/database/schema.js';
 import bcrypt from 'bcrypt';
 import { eq } from 'drizzle-orm';
 import { Request, Response, Router } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
+import { env } from '@/env';
 
 const { sign } = jsonwebtoken;
 
@@ -29,19 +30,22 @@ login.post('/', async (req: Request, res: Response) => {
 
         if (!user) return res.sendStatus(401);
 
+        console.log(password);
+        console.log('DB', user[0].password);
+
         const passwordMatch = await bcrypt.compare(password, user[0].password);
 
         if (!passwordMatch) return res.sendStatus(401);
 
         const accessToken = sign(
             { userId: user[0].id },
-            process.env.ACCESS_TOKEN_SECRET as string,
+            env.ACCESS_TOKEN_SECRET as string,
             { expiresIn: '30s' }
         );
 
         const newRefreshToken = sign(
             { userId: user[0].id },
-            process.env.REFRESH_TOKEN_SECRET as string,
+            env.REFRESH_TOKEN_SECRET as string,
             { expiresIn: '1d' }
         );
 

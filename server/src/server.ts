@@ -1,18 +1,16 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import 'dotenv/config';
 import express, { Express, Request, Response } from 'express';
 import { pinoHttp } from 'pino-http';
 import { logger } from './lib/logger';
 import { rootRouter } from './routes/api/root';
+import { env } from '@/env';
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS || '';
-const allowedOriginsArray = allowedOrigins
-    .split(',')
-    .map((item) => item.trim());
+const allowedOriginsArray = env.ALLOWED_ORIGINS.split(',').map((item) =>
+    item.trim()
+);
 
 app.use(
     pinoHttp({
@@ -48,6 +46,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use('/api', rootRouter);
 
-app.listen(port, () => {
-    console.log(`[server]: Server is running on port: ${port}`);
+app.listen(env.PORT, () => {
+    console.log(`[server]: Server is running on port: ${env.PORT}`);
 });

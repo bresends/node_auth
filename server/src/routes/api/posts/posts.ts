@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { verifyJWT } from '@/middleware/verifyJWT.js';
+import { verifyJWT } from '@src/middleware/verifyJWT.js';
 
 export const post = Router();
 

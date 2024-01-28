@@ -1,10 +1,10 @@
 import { Router } from 'express';
 
-import { db } from '@/database/drizzleClient';
-import { verifyJWT } from '@/middleware/verifyJWT';
-import { verifyRole } from '@/middleware/verifyRoles';
+import { db } from '@src/database/drizzleClient';
+import { verifyJWT } from '@src/middleware/verifyJWT';
+import { verifyRole } from '@src/middleware/verifyRoles';
 
-import { roles, users } from '@/database/schema.js';
+import { roles, users } from '@src/database/schema.js';
 import { eq } from 'drizzle-orm';
 
 export const admin = Router();

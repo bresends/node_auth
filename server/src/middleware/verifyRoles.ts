@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
-import { db } from '@/database/drizzleClient.js';
-import { roles, users } from '@/database/schema.js';
+import { db } from '@src/database/drizzleClient.js';
+import { roles, users } from '@src/database/schema.js';
 import { eq } from 'drizzle-orm';
+import { env } from '@/env';
 
 const { verify } = jsonwebtoken;
 
@@ -16,7 +17,7 @@ export const verifyRole = (allowedRoles: string[]) => {
 
         verify(
             token,
-            process.env.ACCESS_TOKEN_SECRET as string,
+            env.ACCESS_TOKEN_SECRET as string,
             async (err, decoded) => {
                 if (err) return res.sendStatus(401); // Unauthorized
 

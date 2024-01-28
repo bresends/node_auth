@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { db } from '@/database/drizzleClient.js';
-import { refreshToken } from '@/database/schema.js';
+import { db } from '@src/database/drizzleClient.js';
+import { refreshToken } from '@src/database/schema.js';
 import { eq } from 'drizzle-orm';
 
 export const logout = Router();

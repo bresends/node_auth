@@ -1,5 +1,5 @@
-import { db } from '@/database/drizzleClient.js';
-import { roles, users } from '@/database/schema.js';
+import { db } from '@src/database/drizzleClient.js';
+import { roles, users } from '@src/database/schema.js';
 import { LibsqlError } from '@libsql/client';
 import bcrypt from 'bcrypt';
 import { Request, Response, Router } from 'express';
@@ -35,7 +35,10 @@ register.post('/', async (req: Request, res: Response) => {
 
         res.status(201).json({ message: 'New user created.' });
     } catch (error) {
-        if (error instanceof LibsqlError && error.code === 'SQLITE_CONSTRAINT') {
+        if (
+            error instanceof LibsqlError &&
+            error.code === 'SQLITE_CONSTRAINT'
+        ) {
             return res.sendStatus(409); // Conflict
         }
 

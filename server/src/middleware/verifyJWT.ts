@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
+import { env } from '@/env';
 
 const { verify } = jsonwebtoken;
 
@@ -12,7 +13,7 @@ export const verifyJWT = (req: Request, res: Response, next: NextFunction) => {
     // Bearer token remove
     const token = authHeader.split(' ')[1];
 
-    verify(token, process.env.ACCESS_TOKEN_SECRET as string, (err, decoded) => {
+    verify(token, env.ACCESS_TOKEN_SECRET as string, (err, decoded) => {
         if (err) return res.status(403).json({ error: 'Forbidden' });
 
         const { userId } = decoded as {
