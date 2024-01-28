@@ -20,10 +20,14 @@ export interface Roles {
     name: string;
 }
 
+export interface AdminResponse {
+    users: User[];
+}
+
 export function Admin() {
     const axiosPrivate = useAxiosPrivate();
 
-    const [response, setResponse] = useState('');
+    const [response, setResponse] = useState<AdminResponse>();
 
     useEffect(() => {
         let isMounted = true;
@@ -31,9 +35,12 @@ export function Admin() {
 
         const getAdminProtectedData = async () => {
             try {
-                const response = await axiosPrivate.get('/api/admin', {
-                    signal: controller.signal,
-                });
+                const response = await axiosPrivate.get<AdminResponse>(
+                    '/api/admin',
+                    {
+                        signal: controller.signal,
+                    }
+                );
                 isMounted && setResponse(response.data);
             } catch (error) {
                 console.log(error);
