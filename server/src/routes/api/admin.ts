@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
-import { db } from '@/database/drizzleClient.js';
-import { verifyJWT } from '@/middleware/verifyJWT.js';
-import { verifyRole } from '@/middleware/verifyRoles.js';
+import { db } from '@/database/drizzleClient';
+import { verifyJWT } from '@/middleware/verifyJWT';
+import { verifyRole } from '@/middleware/verifyRoles';
 
 import { roles, users } from '@/database/schema.js';
 import { eq } from 'drizzle-orm';

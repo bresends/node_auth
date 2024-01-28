@@ -1,10 +1,10 @@
-import express, { Express, Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import 'dotenv/config';
-import { rootRouter } from './routes/api/root.js';
-import cookieParser from 'cookie-parser';
-import { logEvents } from './middleware/logEvents.js';
-import { logErrors } from './middleware/logErrors.js';
+import express, { Express, Request, Response } from 'express';
+import { pinoHttp } from 'pino-http';
+import { logger } from './lib/logger';
+import { rootRouter } from './routes/api/root';
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
@@ -14,7 +14,11 @@ const allowedOriginsArray = allowedOrigins
     .split(',')
     .map((item) => item.trim());
 
-app.use(logEvents);
+app.use(
+    pinoHttp({
+        logger,
+    })
+);
 
 // Allow javascript to access the cookie in the browser
 app.use((req: Request, res: Response, next) => {
@@ -44,10 +48,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use('/api', rootRouter);
 
-app.use(logErrors);
-
 app.listen(port, () => {
-    console.log(
-        `[server]: Server is running at ${process.env.SERVER_URL}:${port}`
-    );
+    console.log(`[server]: Server is running on port: ${port}`);
 });

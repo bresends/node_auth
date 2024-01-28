@@ -67,7 +67,7 @@ refresh.get('/', async (req: Request, res: Response) => {
 
                 const newAccessToken = sign(
                     { userId: user[0].id },
-                    process.env.ACESS_TOKEN_SECRET as string,
+                    process.env.ACCESS_TOKEN_SECRET as string,
                     { expiresIn: '30s' }
                 );
 
