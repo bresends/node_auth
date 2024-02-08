@@ -39,7 +39,7 @@ export function Admin() {
                     '/api/admin',
                     {
                         signal: controller.signal,
-                    }
+                    },
                 );
                 isMounted && setResponse(response.data);
             } catch (error) {
@@ -69,7 +69,7 @@ export function Admin() {
                     <ul>
                         {response?.users?.map((user: User) => (
                             <li key={user.id}>
-                                User {user.id} - {user.email} - Role:{' '}
+                                User {user.id} - {user.email} - Role: //{' '}
                                 {user.roles.name.toLocaleUpperCase()}
                             </li>
                         ))}
