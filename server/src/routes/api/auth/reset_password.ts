@@ -63,14 +63,14 @@ resetPassword.post('/:tokenId', async (req: Request, res: Response) => {
             .where(eq(passwordResetToken.id, tokenId))
             .limit(1);
 
-        if (!token) return res.sendStatus(404);
+        if (!token.length) return res.sendStatus(404);
 
         const user = await db
             .select()
             .from(users)
             .where(eq(users.id, Number(token[0].userId)));
 
-        if (!user) return res.sendStatus(404);
+        if (!user.length) return res.sendStatus(404);
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
