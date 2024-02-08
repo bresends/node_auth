@@ -22,7 +22,7 @@ resetPassword.post('/', async (req: Request, res: Response) => {
             .where(eq(users.email, email))
             .limit(1);
 
-        if (!user) return res.sendStatus(404);
+        if (!user.length) return res.sendStatus(404);
 
         const token = await db
             .insert(passwordResetToken)
