@@ -28,10 +28,7 @@ login.post('/', async (req: Request, res: Response) => {
             .where(eq(users.email, email))
             .leftJoin(refreshToken, eq(users.id, refreshToken.userId));
 
-        if (!user) return res.sendStatus(401);
-
-        console.log(password);
-        console.log('DB', user[0].password);
+        if (!user.length) return res.sendStatus(401);
 
         const passwordMatch = await bcrypt.compare(password, user[0].password);
 
@@ -40,13 +37,13 @@ login.post('/', async (req: Request, res: Response) => {
         const accessToken = sign(
             { userId: user[0].id },
             env.ACCESS_TOKEN_SECRET as string,
-            { expiresIn: '30s' }
+            { expiresIn: '30s' },
         );
 
         const newRefreshToken = sign(
             { userId: user[0].id },
             env.REFRESH_TOKEN_SECRET as string,
-            { expiresIn: '1d' }
+            { expiresIn: '1d' },
         );
 
         /*
@@ -62,7 +59,7 @@ login.post('/', async (req: Request, res: Response) => {
                 .from(refreshToken)
                 .where(eq(refreshToken.token, oldRefreshToken));
 
-            if (dbToken) {
+            if (dbToken.length) {
                 await db
                     .delete(refreshToken)
                     .where(eq(refreshToken.token, oldRefreshToken));
