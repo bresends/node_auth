@@ -16,7 +16,7 @@ logout.get('/', async (req: Request, res: Response) => {
             .from(refreshToken)
             .where(eq(refreshToken.token, oldRefreshToken));
 
-        if (!dbToken) {
+        if (!dbToken.length) {
             res.clearCookie('jwt', {
                 httpOnly: true,
                 sameSite: 'none',
