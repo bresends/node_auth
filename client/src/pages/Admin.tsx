@@ -70,7 +70,6 @@ export function Admin() {
                         {response?.users?.map((user: User) => (
                             <li key={user.id}>
                                 User {user.id} - {user.email} - Role: //{' '}
-                                {user.roles.name.toLocaleUpperCase()}
                             </li>
                         ))}
                     </ul>
