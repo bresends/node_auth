@@ -26,7 +26,7 @@ refresh.get('/', async (req: Request, res: Response) => {
         // Step 1: Check if user previous refresh token exists
         // Step 2: Check if the previous refresh token is valid (if it is not I can just block the attacker)
         // Step 3: If the previous refresh token is valid, but no user has it associated, delete all refresh tokens associated with the user ()
-        if (!user) {
+        if (!user.length) {
             verify(
                 oldRefreshToken,
                 env.REFRESH_TOKEN_SECRET as string,
@@ -39,10 +39,10 @@ refresh.get('/', async (req: Request, res: Response) => {
                         .where(
                             eq(
                                 refreshToken.userId,
-                                (decoded as { userId: number }).userId
-                            )
+                                (decoded as { userId: number }).userId,
+                            ),
                         );
-                }
+                },
             );
             return res.sendStatus(403); // Forbidden
         }
@@ -69,13 +69,13 @@ refresh.get('/', async (req: Request, res: Response) => {
                 const newAccessToken = sign(
                     { userId: user[0].id },
                     env.ACCESS_TOKEN_SECRET as string,
-                    { expiresIn: '30s' }
+                    { expiresIn: '30s' },
                 );
 
                 const newRefreshToken = sign(
                     { userId: user[0].id },
                     env.REFRESH_TOKEN_SECRET as string,
-                    { expiresIn: '1d' }
+                    { expiresIn: '1d' },
                 );
 
                 // Delete previous refresh token
@@ -97,7 +97,7 @@ refresh.get('/', async (req: Request, res: Response) => {
                 });
 
                 res.json({ accessToken: newAccessToken });
-            }
+            },
         );
     } catch (error) {
         if (error instanceof Error) {
